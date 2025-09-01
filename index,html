@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>😂 Funny Volume Control Game</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #ffecd2, #fcb69f);
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      text-align: center;
+      padding: 20px;
+      color: #222;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5em;
+    }
+    p {
+      max-width: 700px;
+      margin: auto;
+      font-size: 1.1rem;
+      margin-bottom: 1.5em;
+    }
+    .control {
+      background: #fff8;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 500px;
+    }
+    .slider {
+      width: 80%;
+    }
+    .emoji {
+      font-size: 2rem;
+      margin: 5px;
+    }
+    canvas {
+      border: 1px dashed #888;
+      margin-top: 10px;
+      background: #fff;
+      border-radius: 12px;
+    }
+    button {
+      background: #ff9f43;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      margin: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    button:hover {
+      background: #ff7f00;
+    }
+  </style>
+</head>
+<body>
+
+<h1>😂 Funny Volume Control Game 🎵</h1>
+<p>
+Welcome to the <b>weirdest volume controller</b> you’ve ever seen!  
+Adjust the sound of our calm, endless tune using any of the <b>crazy controls</b> below.  
+👉 Will you pour chai, draw numbers, eclipse the sun, or shoot balls to control the volume?  
+Your phone’s own music may also be adjusted if you allow it.  
+</p>
+
+<button id="startMusic">▶️ Start Funny Music</button>
+<button id="connectMusic">📱 Try Control Phone Music</button>
+
+<!-- 🎚 Control 1: Emoji Face Slider -->
+<div class="control">
+  <h2>😀 Emoji Mood Volume</h2>
+  <input type="range" min="0" max="100" value="50" class="slider" id="emojiSlider">
+  <div id="emojiFace" class="emoji">😐</div>
+</div>
+
+<!-- 🎚 Control 2: Chai Cup -->
+<div class="control">
+  <h2>☕ Fill the Chai Cup</h2>
+  <canvas id="chaiCanvas" width="200" height="150"></canvas>
+</div>
+
+<!-- 🎚 Control 3: Cat Meow Meter -->
+<div class="control">
+  <h2>🐱 Cat Meow Meter</h2>
+  <input type="range" min="0" max="100" value="50" id="catSlider">
+  <div id="catEmoji" class="emoji">😺</div>
+</div>
+
+<!-- 🎚 Control 4: DJ Vinyl Knob -->
+<div class="control">
+  <h2>💿 DJ Spin Control</h2>
+  <canvas id="djKnob" width="150" height="150"></canvas>
+</div>
+
+<!-- 🎚 Control 5: Shhh → PARTY -->
+<div class="control">
+  <h2>🤫 Shhh → 🎉 PARTY</h2>
+  <input type="range" min="0" max="100" value="50" id="partySlider">
+  <div id="partyText">Medium 🎶</div>
+</div>
+
+<!-- 🎚 Control 6: Ball Shooter -->
+<div class="control">
+  <h2>🏀 Ball Shooter</h2>
+  <canvas id="ballCanvas" width="250" height="150"></canvas>
+</div>
+
+<!-- 🎚 Control 7: Pencil Writing -->
+<div class="control">
+  <h2>✏️ Write the Volume</h2>
+  <input type="number" id="pencilInput" min="0" max="100" placeholder="Write a number...">
+</div>
+
+<!-- 🎚 Control 8: Solar Eclipse -->
+<div class="control">
+  <h2>🌞 Eclipse Volume</h2>
+  <canvas id="eclipseCanvas" width="200" height="200"></canvas>
+</div>
+
+<!-- 🎚 Control 9: Seesaw -->
+<div class="control">
+  <h2>⚖️ Seesaw Balance</h2>
+  <canvas id="seesawCanvas" width="250" height="120"></canvas>
+</div>
+
+<!-- 🎚 Control 10: Pump Filler -->
+<div class="control">
+  <h2>🚲 Pump the Volume</h2>
+  <button id="pumpBtn">Pump!</button>
+  <div style="width:200px; height:20px; border:1px solid #444; margin:auto; border-radius:10px; overflow:hidden;">
+    <div id="pumpBar" style="width:50%; height:100%; background:#00c853;"></div>
+  </div>
+</div>
+
+<!-- 🎚 Control 11: Pi Entry -->
+<div class="control">
+  <h2>🥧 Enter π Digits</h2>
+  <input type="text" id="piInput" placeholder="Enter digits of Pi">
+  <div id="piMsg"></div>
+</div>
+
+<script>
+/* 🎵 Simple calm looping melody */
+let audioCtx, masterGain;
+function startMusic() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = audioCtx.createGain();
+  masterGain.gain.value = 0.5;
+  masterGain.connect(audioCtx.destination);
+
+  function playNote(freq, time, duration) {
+    let osc = audioCtx.createOscillator();
+    osc.type = "sine";
+    osc.frequency.value = freq;
+    let g = audioCtx.createGain();
+    g.gain.setValueAtTime(0.2, time);
+    g.gain.exponentialRampToValueAtTime(0.001, time + duration);
+    osc.connect(g).connect(masterGain);
+    osc.start(time);
+    osc.stop(time + duration);
+  }
+  const notes = [261, 329, 392, 329]; // C E G E
+  let t = audioCtx.currentTime;
+  setInterval(() => {
+    notes.forEach((n, i) => playNote(n, t + i * 0.5, 0.4));
+    t += 2;
+  }, 2000);
+}
+document.getElementById("startMusic").onclick = startMusic;
+
+/* Try to connect phone music */
+document.getElementById("connectMusic").onclick = () => {
+  if ("mediaSession" in navigator) {
+    alert("We can send volume hints, but controlling your phone’s music fully depends on the browser!");
+    navigator.mediaSession.playbackState = "playing";
+  } else {
+    alert("Sorry, MediaSession not supported.");
+  }
+};
+
+/* Helper: set volume */
+function setVolume(val) {
+  if (masterGain) masterGain.gain.value = val/100;
+}
+
+/* Emoji Slider */
+emojiSlider.oninput = e => {
+  const v = e.target.value;
+  setVolume(v);
+  const faces = ["😶","🙂","😀","😁","🤩"];
+  document.getElementById("emojiFace").textContent = faces[Math.floor(v/25)];
+};
+
+/* Chai Cup Canvas */
+const chai = chaiCanvas.getContext("2d");
+function drawChai(level=50) {
+  chai.clearRect(0,0,200,150);
+  chai.strokeRect(50,20,100,120);
+  chai.fillStyle="#d2691e";
+  chai.fillRect(50,140-(level*1.2),100,level*1.2);
+}
+drawChai();
+chaiCanvas.onclick = e=>{
+  const level = Math.random()*100;
+  drawChai(level);
+  setVolume(level);
+};
+
+/* Cat Slider */
+catSlider.oninput = e=>{
+  const v = e.target.value;
+  setVolume(v);
+  const faces=["🙀","😿","😺","😻"];
+  catEmoji.textContent=faces[Math.floor(v/34)];
+};
+
+/* DJ Knob */
+const dj = djKnob.getContext("2d");
+let angle=0.5;
+function drawKnob() {
+  dj.clearRect(0,0,150,150);
+  dj.beginPath(); dj.arc(75,75,60,0,Math.PI*2); dj.fillStyle="#444"; dj.fill();
+  dj.strokeStyle="#fff"; dj.moveTo(75,75);
+  dj.lineTo(75+50*Math.cos(angle),75+50*Math.sin(angle)); dj.stroke();
+}
+drawKnob();
+djKnob.onclick=()=>{
+  angle+=0.5;
+  drawKnob();
+  setVolume((angle%(2*Math.PI))/(2*Math.PI)*100);
+};
+
+/* Party Slider */
+partySlider.oninput = e=>{
+  const v=e.target.value;
+  setVolume(v);
+  partyText.textContent = v<20?"🤫 Quiet": v<60?"Medium 🎶":"🎉 PARTY!";
+};
+
+/* Ball Shooter */
+const ball=ballCanvas.getContext("2d");
+function shootBall() {
+  ball.clearRect(0,0,250,150);
+  let x=20,y=130,vx=5,vy=-8;
+  let interval=setInterval(()=>{
+    ball.clearRect(0,0,250,150);
+    ball.beginPath(); ball.arc(x,y,10,0,Math.PI*2); ball.fillStyle="red"; ball.fill();
+    x+=vx; y+=vy; vy+=0.3;
+    if(y>=130){ clearInterval(interval); const level=x; setVolume((level/250)*100); }
+  },30);
+}
+ballCanvas.onclick=shootBall;
+
+/* Pencil Writing */
+pencilInput.oninput=e=>{
+  let v=+e.target.value;
+  if(v>=0&&v<=100){setVolume(v);}
+};
+
+/* Eclipse */
+const ectx=eclipseCanvas.getContext("2d");
+let moonX=50;
+function drawEclipse(){
+  ectx.clearRect(0,0,200,200);
+  ectx.beginPath(); ectx.arc(100,100,60,0,Math.PI*2); ectx.fillStyle="yellow"; ectx.fill();
+  ectx.beginPath(); ectx.arc(moonX,100,60,0,Math.PI*2); ectx.fillStyle="black"; ectx.fill();
+}
+drawEclipse();
+eclipseCanvas.onclick=()=>{
+  moonX=moonX===50?120:50;
+  drawEclipse();
+  setVolume(moonX===50?30:70);
+};
+
+/* Seesaw */
+const sc=seesawCanvas.getContext("2d");
+let pos=125;
+function drawSeesaw(){
+  sc.clearRect(0,0,250,120);
+  sc.beginPath(); sc.moveTo(0,100); sc.lineTo(250,100); sc.stroke();
+  sc.beginPath(); sc.arc(pos,90,10,0,Math.PI*2); sc.fill();
+}
+drawSeesaw();
+seesawCanvas.onclick=()=>{
+  pos=Math.random()*250;
+  drawSeesaw();
+  setVolume(pos/250*100);
+};
+
+/* Pump */
+pumpBtn.onclick=()=>{
+  let w=parseInt(pumpBar.style.width);
+  w=Math.min(100,w+10);
+  pumpBar.style.width=w+"%";
+  setVolume(w);
+};
+
+/* Pi Entry */
+piInput.oninput=e=>{
+  let txt=e.target.value;
+  if(/^3\.14/.test(txt)){ setVolume(31); piMsg.textContent="🥧 Correct vibe!"; }
+  else { piMsg.textContent="❌ That’s not Pi!"; }
+};
+</script>
+</body>
+</html>
