@@ -3,148 +3,179 @@
 <head>
   <meta charset="UTF-8">
   <title>😂 Funny Volume Control Game</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <!-- Orbitron: Futuristic gaming font; Luckiest Guy: playful headers -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Luckiest+Guy&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --main-bg1: #232526;
+      --main-bg2: #414345;
+      --accent: #ff7643;
+      --shadow: 0 6px 20px rgba(100,40,0,0.15);
+      --radius: 20px;
+      --font-main: 'Orbitron', sans-serif;
+      --font-head: 'Luckiest Guy', cursive;
+    }
     body {
-      background: linear-gradient(135deg, #ffecd2, #fcb69f);
-      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: linear-gradient(120deg, var(--main-bg1), var(--main-bg2));
+      font-family: var(--font-main);
+      color: #fffdfc;
       text-align: center;
-      padding: 20px;
-      color: #222;
+      padding: 30px 6vw 10vw 6vw;
     }
     h1 {
-      font-size: 2.5rem;
-      margin-bottom: 0.5em;
+      font-family: var(--font-head);
+      letter-spacing: 0.05em;
+      font-size: 2.2rem;
+      color: var(--accent);
+      text-shadow: 2px 3px 18px #222,2px 4px 15px #ffb300;
+      margin-bottom: 10px;
     }
-    p {
-      max-width: 700px;
-      margin: auto;
-      font-size: 1.1rem;
-      margin-bottom: 1.5em;
+    h2 {
+      font-family: var(--font-head);
+      color: #62fff9;
+      text-shadow: 1px 2px 9px #016, 1px 3px 15px #001f3f;
+      font-size: 1.2em;
+      margin: 0.5em 0;
     }
+    p { font-size: 1.08em; max-width: 650px; margin: 0 auto 24px; }
     .control {
-      background: #fff8;
-      border-radius: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      padding: 20px;
-      margin: 20px auto;
-      max-width: 500px;
+      background: rgba(26,26,36,0.93);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      margin: 24px auto;
+      max-width: 430px;
+      min-width: 170px;
+      transition: background 0.3s;
+      border: 1.2px solid #46484A;
     }
-    .slider {
-      width: 80%;
+    .slider, input[type=number], input[type=text] {
+      width: 95%;
+      margin: 8px 0;
+      background: #232526;
+      border-radius: 8px;
+      border: 2px solid #ffb200;
+      font-family: var(--font-main);
+      font-size: 1.08em;
+      color: #33f8a1;
+      padding: 6px 8px;
     }
-    .emoji {
-      font-size: 2rem;
-      margin: 5px;
-    }
-    canvas {
-      border: 1px dashed #888;
-      margin-top: 10px;
-      background: #fff;
-      border-radius: 12px;
-    }
-    button {
-      background: #ff9f43;
+    .emoji, #catEmoji { font-size: 2.2rem; margin: 5px; }
+    canvas { width: 99%; max-width: 330px; height: auto; margin: 12px 0; border-radius: 10px; background: #fff; display: block; margin-left: auto; margin-right: auto; }
+    button, #pumpBtn {
+      background: linear-gradient(90deg, #ff7643, #ffd057 70%);
+      color: #161513;
       border: none;
+      border-radius: 11px;
       padding: 12px 24px;
-      font-size: 1.1rem;
-      border-radius: 10px;
+      font-family: var(--font-main);
+      font-size: 1em;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      box-shadow: 0 3px 16px rgba(243,100,0,0.18);
+      transition: background 0.19s, transform 0.09s;
+      margin: 10px auto;
+      display: inline-block;
       cursor: pointer;
-      margin: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
-    button:hover {
-      background: #ff7f00;
+    button:hover, #pumpBtn:active { background: #ffa269; transform: scale(1.03); }
+    #partyText { margin: 7px 0; font-size: 1.1em; color:#fdff74; }
+    @media (max-width: 530px) {
+      .control { max-width:98vw; padding:8px 2vw;}
+      h1 { font-size: 1.1em;}
+      h2 {font-size:0.98em;}
+      .emoji { font-size: 1.3rem;}
     }
   </style>
 </head>
 <body>
 
-<h1>😂 Funny Volume Control Game 🎵</h1>
+<h1>😂 Funny Volume Control Game 🎮</h1>
 <p>
-Welcome to the <b>weirdest volume controller</b> you’ve ever seen!  
-Adjust the sound of our calm, endless tune using any of the <b>crazy controls</b> below.  
-👉 Will you pour chai, draw numbers, eclipse the sun, or shoot balls to control the volume?  
-Your phone’s own music may also be adjusted if you allow it.  
+  Welcome to the <b>craziest volume controller</b> ever built!  
+  Adjust your sound with our <span style="color:#fffd66;">quirky controls</span> below.<br>
+  <b>Can you outsmart the pump, eclipse the sun, or unlock pi mode?</b>
 </p>
+<button id="startMusic">▶️ Start Game Music</button>
+<!-- Mobile-friendly: Not doing external music control for privacy -->
 
-<button id="startMusic">▶️ Start Funny Music</button>
-<button id="connectMusic">📱 Try Control Phone Music</button>
-
-<!-- 🎚 Control 1: Emoji Face Slider -->
+<!-- 😀 Emoji Mood Volume -->
 <div class="control">
   <h2>😀 Emoji Mood Volume</h2>
-  <input type="range" min="0" max="100" value="50" class="slider" id="emojiSlider">
+  <input type="range" min="0" max="100" value="50" class="slider" id="emojiSlider" aria-label="Emoji Mood Slider">
   <div id="emojiFace" class="emoji">😐</div>
 </div>
 
-<!-- 🎚 Control 2: Chai Cup -->
+<!-- ☕ Fill the Chai Cup -->
 <div class="control">
   <h2>☕ Fill the Chai Cup</h2>
-  <canvas id="chaiCanvas" width="200" height="150"></canvas>
+  <canvas id="chaiCanvas" width="160" height="120"></canvas>
 </div>
 
-<!-- 🎚 Control 3: Cat Meow Meter -->
+<!-- 🐱 Cat Meow Meter -->
 <div class="control">
   <h2>🐱 Cat Meow Meter</h2>
-  <input type="range" min="0" max="100" value="50" id="catSlider">
+  <input type="range" min="0" max="100" value="50" id="catSlider" class="slider" aria-label="Cat Meow Slider">
   <div id="catEmoji" class="emoji">😺</div>
 </div>
 
-<!-- 🎚 Control 4: DJ Vinyl Knob -->
+<!-- 💿 DJ Vinyl Knob -->
 <div class="control">
   <h2>💿 DJ Spin Control</h2>
-  <canvas id="djKnob" width="150" height="150"></canvas>
+  <canvas id="djKnob" width="120" height="120"></canvas>
 </div>
 
-<!-- 🎚 Control 5: Shhh → PARTY -->
+<!-- 🤫 Shhh → PARTY -->
 <div class="control">
   <h2>🤫 Shhh → 🎉 PARTY</h2>
-  <input type="range" min="0" max="100" value="50" id="partySlider">
+  <input type="range" min="0" max="100" value="50" id="partySlider" class="slider" aria-label="Party Slider">
   <div id="partyText">Medium 🎶</div>
 </div>
 
-<!-- 🎚 Control 6: Ball Shooter -->
+<!-- 🏀 Ball Shooter -->
 <div class="control">
   <h2>🏀 Ball Shooter</h2>
-  <canvas id="ballCanvas" width="250" height="150"></canvas>
+  <canvas id="ballCanvas" width="210" height="110"></canvas>
 </div>
 
-<!-- 🎚 Control 7: Pencil Writing -->
+<!-- ✏️ Write the Volume -->
 <div class="control">
   <h2>✏️ Write the Volume</h2>
   <input type="number" id="pencilInput" min="0" max="100" placeholder="Write a number...">
 </div>
 
-<!-- 🎚 Control 8: Solar Eclipse -->
+<!-- 🌞 Eclipse Volume -->
 <div class="control">
   <h2>🌞 Eclipse Volume</h2>
-  <canvas id="eclipseCanvas" width="200" height="200"></canvas>
+  <canvas id="eclipseCanvas" width="150" height="150"></canvas>
 </div>
 
-<!-- 🎚 Control 9: Seesaw -->
+<!-- ⚖️ Seesaw Balance -->
 <div class="control">
   <h2>⚖️ Seesaw Balance</h2>
-  <canvas id="seesawCanvas" width="250" height="120"></canvas>
+  <canvas id="seesawCanvas" width="210" height="50"></canvas>
 </div>
 
-<!-- 🎚 Control 10: Pump Filler -->
+<!-- 🚲 Pump the Volume -->
 <div class="control">
   <h2>🚲 Pump the Volume</h2>
-  <button id="pumpBtn">Pump!</button>
-  <div style="width:200px; height:20px; border:1px solid #444; margin:auto; border-radius:10px; overflow:hidden;">
-    <div id="pumpBar" style="width:50%; height:100%; background:#00c853;"></div>
+  <button id="pumpBtn" aria-label="Pump!">Pump!</button>
+  <div style="width:90%; max-width:200px; height:22px; background: #181c16; border-radius:10px; overflow:hidden; margin:auto; border:2px solid #14c853;">
+    <div id="pumpBar" style="width:50%; height:100%; background:linear-gradient(90deg, #00c853,#92ff96); border-radius:10px;"></div>
   </div>
 </div>
 
-<!-- 🎚 Control 11: Pi Entry -->
+<!-- 🥧 Enter π Digits -->
 <div class="control">
   <h2>🥧 Enter π Digits</h2>
+  <div style="font-size:1em;color:#eecb74;" id="piStatus">Current Volume: <span id="piVolume">7</span>%</div>
   <input type="text" id="piInput" placeholder="Enter digits of Pi">
   <div id="piMsg"></div>
 </div>
 
 <script>
-/* 🎵 Simple calm looping melody */
+/* ---- AUDIO ---- */
 let audioCtx, masterGain;
 function startMusic() {
   if (audioCtx) return;
@@ -155,65 +186,62 @@ function startMusic() {
 
   function playNote(freq, time, duration) {
     let osc = audioCtx.createOscillator();
-    osc.type = "sine";
+    osc.type = "triangle";
     osc.frequency.value = freq;
     let g = audioCtx.createGain();
-    g.gain.setValueAtTime(0.2, time);
+    g.gain.setValueAtTime(0.12, time);
     g.gain.exponentialRampToValueAtTime(0.001, time + duration);
     osc.connect(g).connect(masterGain);
-    osc.start(time);
-    osc.stop(time + duration);
+    osc.start(time); osc.stop(time + duration);
   }
-  const notes = [261, 329, 392, 329]; // C E G E
+  const notes = [261, 329, 392, 329, 440, 349, 392];
   let t = audioCtx.currentTime;
   setInterval(() => {
-    notes.forEach((n, i) => playNote(n, t + i * 0.5, 0.4));
+    notes.forEach((n, i) => playNote(n, t + i * 0.3, 0.23));
     t += 2;
-  }, 2000);
+  }, 2100);
 }
 document.getElementById("startMusic").onclick = startMusic;
-
-/* Try to connect phone music */
-document.getElementById("connectMusic").onclick = () => {
-  if ("mediaSession" in navigator) {
-    alert("We can send volume hints, but controlling your phone’s music fully depends on the browser!");
-    navigator.mediaSession.playbackState = "playing";
-  } else {
-    alert("Sorry, MediaSession not supported.");
-  }
-};
-
-/* Helper: set volume */
 function setVolume(val) {
   if (masterGain) masterGain.gain.value = val/100;
+  document.getElementById("piVolume").textContent = Math.round(val);
 }
+setVolume(7);
 
 /* Emoji Slider */
-emojiSlider.oninput = e => {
-  const v = e.target.value;
+emojiSlider.oninput = function(e) {
+  const v = +e.target.value;
   setVolume(v);
   const faces = ["😶","🙂","😀","😁","🤩"];
-  document.getElementById("emojiFace").textContent = faces[Math.floor(v/25)];
+  emojiFace.textContent = faces[Math.min(4, Math.floor(v/22))];
 };
 
-/* Chai Cup Canvas */
+/* Fill the Chai Cup */
 const chai = chaiCanvas.getContext("2d");
-function drawChai(level=50) {
-  chai.clearRect(0,0,200,150);
-  chai.strokeRect(50,20,100,120);
-  chai.fillStyle="#d2691e";
-  chai.fillRect(50,140-(level*1.2),100,level*1.2);
+function drawChai(level=50){
+  chai.clearRect(0,0,160,120);
+  chai.fillStyle="#ffecc7";
+  chai.fillRect(39,20,82,89); // cup bg
+  chai.strokeStyle="#cf930f";
+  chai.lineWidth=4; chai.strokeRect(39,20,82,89);// cup outline
+  chai.beginPath();
+  chai.arc(80,35,40,Math.PI,0); chai.fillStyle="#f6bc81"; chai.fill();
+  // tea
+  let teaLevel = 109-(level*0.85);
+  chai.fillStyle="#ba7f3a"; 
+  chai.fillRect(43,teaLevel,74, 109-teaLevel);
+  chai.beginPath(); chai.arc(80,teaLevel,37,Math.PI,0); chai.fill();
 }
-drawChai();
-chaiCanvas.onclick = e=>{
-  const level = Math.random()*100;
-  drawChai(level);
-  setVolume(level);
+let chaiLvl = 50; drawChai(chaiLvl);
+chaiCanvas.onclick = ()=>{
+  chaiLvl = Math.floor(Math.random()*100);
+  drawChai(chaiLvl);
+  setVolume(chaiLvl);
 };
 
-/* Cat Slider */
-catSlider.oninput = e=>{
-  const v = e.target.value;
+/* Cat Meow Meter */
+catSlider.oninput = function(e){
+  const v=+e.target.value;
   setVolume(v);
   const faces=["🙀","😿","😺","😻"];
   catEmoji.textContent=faces[Math.floor(v/34)];
@@ -221,90 +249,130 @@ catSlider.oninput = e=>{
 
 /* DJ Knob */
 const dj = djKnob.getContext("2d");
-let angle=0.5;
+let angle = Math.PI/2;
 function drawKnob() {
-  dj.clearRect(0,0,150,150);
-  dj.beginPath(); dj.arc(75,75,60,0,Math.PI*2); dj.fillStyle="#444"; dj.fill();
-  dj.strokeStyle="#fff"; dj.moveTo(75,75);
-  dj.lineTo(75+50*Math.cos(angle),75+50*Math.sin(angle)); dj.stroke();
+  dj.clearRect(0,0,120,120);
+  // vinyl
+  dj.beginPath(); dj.arc(60,60,55,0,2*Math.PI);
+  dj.fillStyle="#444"; dj.fill(); dj.lineWidth=5; dj.strokeStyle="#222"; dj.stroke();
+  // label
+  dj.beginPath(); dj.arc(60,60,13,0,2*Math.PI);
+  dj.fillStyle="#ffd057"; dj.fill();
+  // needle
+  dj.save();
+  dj.translate(60,60);
+  dj.rotate(angle);
+  dj.beginPath(); dj.moveTo(0,0); dj.lineTo(40,0);
+  dj.lineWidth=6; dj.strokeStyle="#ffd057"; dj.stroke();
+  dj.restore();
 }
 drawKnob();
-djKnob.onclick=()=>{
-  angle+=0.5;
+djKnob.onclick = ()=>{
+  angle += 0.7;
   drawKnob();
-  setVolume((angle%(2*Math.PI))/(2*Math.PI)*100);
+  let v = ((angle % (2*Math.PI)) / (2*Math.PI))*100;
+  setVolume(v);
 };
 
-/* Party Slider */
-partySlider.oninput = e=>{
+/* Party Mode */
+partySlider.oninput = function(e){
   const v=e.target.value;
   setVolume(v);
-  partyText.textContent = v<20?"🤫 Quiet": v<60?"Medium 🎶":"🎉 PARTY!";
+  partyText.textContent=v<20 ? "🤫 Quiet" : v<60 ? "Medium 🎶":"🎉 PARTY!";
+  partyText.style.color= v>60? "#fdff74":"#ffd8cf";
 };
 
 /* Ball Shooter */
 const ball=ballCanvas.getContext("2d");
 function shootBall() {
-  ball.clearRect(0,0,250,150);
-  let x=20,y=130,vx=5,vy=-8;
+  ball.clearRect(0,0,210,110);
+  let x=20, y=90, vx=5, vy=-7;
   let interval=setInterval(()=>{
-    ball.clearRect(0,0,250,150);
-    ball.beginPath(); ball.arc(x,y,10,0,Math.PI*2); ball.fillStyle="red"; ball.fill();
-    x+=vx; y+=vy; vy+=0.3;
-    if(y>=130){ clearInterval(interval); const level=x; setVolume((level/250)*100); }
-  },30);
+    ball.clearRect(0,0,210,110);
+    // Bar
+    ball.fillStyle="#ffc300";
+    ball.fillRect(26,100,158,8);
+    // Ball
+    ball.beginPath(); ball.arc(x,y,10,0,2*Math.PI);
+    ball.fillStyle="red"; ball.fill(); ball.lineWidth=2; ball.strokeStyle='#2c2c2c'; ball.stroke();
+    x+=vx; y+=vy; vy+=0.58;
+    // Hit
+    if(y>=98){ clearInterval(interval); 
+      let level = Math.max(0, Math.min(158, x-26));
+      setVolume(level/158*100); }
+  },20);
 }
-ballCanvas.onclick=shootBall;
+ballCanvas.onclick = shootBall;
 
 /* Pencil Writing */
-pencilInput.oninput=e=>{
+pencilInput.oninput=function(e){
   let v=+e.target.value;
-  if(v>=0&&v<=100){setVolume(v);}
+  if(v>=0 && v<=100){setVolume(v);}
 };
 
-/* Eclipse */
+/* Solar Eclipse */
 const ectx=eclipseCanvas.getContext("2d");
-let moonX=50;
+let moonX=45;
 function drawEclipse(){
-  ectx.clearRect(0,0,200,200);
-  ectx.beginPath(); ectx.arc(100,100,60,0,Math.PI*2); ectx.fillStyle="yellow"; ectx.fill();
-  ectx.beginPath(); ectx.arc(moonX,100,60,0,Math.PI*2); ectx.fillStyle="black"; ectx.fill();
+  ectx.clearRect(0,0,150,150);
+  // Sun
+  ectx.beginPath(); ectx.arc(75,75,54,0,2*Math.PI);
+  let sunGrad = ectx.createRadialGradient(75,75,36, 75,75,54); 
+  sunGrad.addColorStop(0,'#ffe700'); sunGrad.addColorStop(1,'#fd9543');
+  ectx.fillStyle=sunGrad; ectx.fill();
+  // Moon
+  ectx.beginPath(); ectx.arc(moonX,75,53,0,2*Math.PI);
+  ectx.fillStyle="#15140e"; ectx.globalAlpha=0.91; ectx.fill(); ectx.globalAlpha=1;
 }
 drawEclipse();
 eclipseCanvas.onclick=()=>{
-  moonX=moonX===50?120:50;
+  moonX = moonX<80? 108 : 45;
   drawEclipse();
-  setVolume(moonX===50?30:70);
+  setVolume(moonX>80? 72 : 23);
 };
 
-/* Seesaw */
+/* Seesaw Balance */
 const sc=seesawCanvas.getContext("2d");
-let pos=125;
+let pos=Math.random()*180+15;
 function drawSeesaw(){
-  sc.clearRect(0,0,250,120);
-  sc.beginPath(); sc.moveTo(0,100); sc.lineTo(250,100); sc.stroke();
-  sc.beginPath(); sc.arc(pos,90,10,0,Math.PI*2); sc.fill();
+  sc.clearRect(0,0,210,50);
+  sc.save();
+  // Bar
+  sc.translate(5,40);
+  let ang = (pos-105)/170 * 0.5;
+  sc.rotate(ang);
+  sc.fillStyle="#b7b5ad";sc.fillRect(0,-5,200,10);
+  // Ball
+  sc.beginPath(); sc.arc(pos,0,9,0,2*Math.PI);
+  sc.fillStyle="#64ebfa"; sc.fill(); sc.lineWidth=2; sc.strokeStyle = "#222";sc.stroke();
+  sc.restore();
 }
 drawSeesaw();
 seesawCanvas.onclick=()=>{
-  pos=Math.random()*250;
-  drawSeesaw();
-  setVolume(pos/250*100);
+  pos=Math.random()*180+15; drawSeesaw();
+  setVolume(pos/210*100);
 };
 
-/* Pump */
+/* Pump Volume */
+let pumpVal = 50;
 pumpBtn.onclick=()=>{
-  let w=parseInt(pumpBar.style.width);
-  w=Math.min(100,w+10);
-  pumpBar.style.width=w+"%";
-  setVolume(w);
+  pumpVal = Math.min(100,pumpVal+Math.floor(Math.random()*14+6));
+  pumpBar.style.width = pumpVal+"%";
+  setVolume(pumpVal);
 };
 
 /* Pi Entry */
+let piVol = 7;
 piInput.oninput=e=>{
   let txt=e.target.value;
-  if(/^3\.14/.test(txt)){ setVolume(31); piMsg.textContent="🥧 Correct vibe!"; }
-  else { piMsg.textContent="❌ That’s not Pi!"; }
+  if(/^(3(\.1?(4)?)?)$/.test(txt)){
+    setVolume(31);
+    piMsg.textContent="✔️ Correct vibe!"; piMsg.style.color="#14d853";
+  } else if(txt && !/^3(\.1?(4)?)?$/.test(txt)) {
+    piMsg.textContent="❌ Not π... try again!"; piMsg.style.color="#ff1e3c";
+  } else {
+    piMsg.textContent="";
+  }
 };
 </script>
 </body>
