@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -99,7 +98,6 @@
   <b>Can you outsmart the pump, eclipse the sun, or unlock pi mode?</b>
 </p>
 <button id="startMusic">▶️ Start Game Music</button>
-<!-- Mobile-friendly: Not doing external music control for privacy -->
 
 <!-- 😀 Emoji Mood Volume -->
 <div class="control">
@@ -176,205 +174,278 @@
 </div>
 
 <script>
-/* ---- AUDIO ---- */
-let audioCtx, masterGain;
-function startMusic() {
-  if (audioCtx) return;
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  masterGain = audioCtx.createGain();
-  masterGain.gain.value = 0.5;
-  masterGain.connect(audioCtx.destination);
+document.addEventListener('DOMContentLoaded', () => {
+  /* ---- ELEMENTS ---- */
+  const startMusicBtn = document.getElementById("startMusic");
+  const emojiSlider = document.getElementById('emojiSlider');
+  const emojiFace = document.getElementById('emojiFace');
+  const chaiCanvas = document.getElementById('chaiCanvas');
+  const catSlider = document.getElementById('catSlider');
+  const catEmoji = document.getElementById('catEmoji');
+  const djKnob = document.getElementById('djKnob');
+  const partySlider = document.getElementById('partySlider');
+  const partyText = document.getElementById('partyText');
+  const ballCanvas = document.getElementById('ballCanvas');
+  const pencilInput = document.getElementById('pencilInput');
+  const eclipseCanvas = document.getElementById('eclipseCanvas');
+  const seesawCanvas = document.getElementById('seesawCanvas');
+  const pumpBtn = document.getElementById('pumpBtn');
+  const pumpBar = document.getElementById('pumpBar');
+  const piVolumeEl = document.getElementById('piVolume');
+  const piInput = document.getElementById('piInput');
+  const piMsg = document.getElementById('piMsg');
 
-  function playNote(freq, time, duration) {
-    let osc = audioCtx.createOscillator();
-    osc.type = "triangle";
-    osc.frequency.value = freq;
-    let g = audioCtx.createGain();
-    g.gain.setValueAtTime(0.12, time);
-    g.gain.exponentialRampToValueAtTime(0.001, time + duration);
-    osc.connect(g).connect(masterGain);
-    osc.start(time); osc.stop(time + duration);
+  /* ---- AUDIO ---- */
+  let audioCtx = null, masterGain = null;
+  function startMusic() {
+    if (audioCtx) return;
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = 0.5;
+    masterGain.connect(audioCtx.destination);
+
+    function playNote(freq, time, duration) {
+      let osc = audioCtx.createOscillator();
+      osc.type = "triangle";
+      osc.frequency.value = freq;
+      let g = audioCtx.createGain();
+      g.gain.setValueAtTime(0.12, time);
+      g.gain.exponentialRampToValueAtTime(0.001, time + duration);
+      osc.connect(g).connect(masterGain);
+      osc.start(time); osc.stop(time + duration);
+    }
+    const notes = [261, 329, 392, 329, 440, 349, 392];
+    let t = audioCtx.currentTime;
+    setInterval(() => {
+      notes.forEach((n, i) => playNote(n, t + i * 0.3, 0.23));
+      t += 2;
+    }, 2100);
   }
-  const notes = [261, 329, 392, 329, 440, 349, 392];
-  let t = audioCtx.currentTime;
-  setInterval(() => {
-    notes.forEach((n, i) => playNote(n, t + i * 0.3, 0.23));
-    t += 2;
-  }, 2100);
-}
-document.getElementById("startMusic").onclick = startMusic;
-function setVolume(val) {
-  if (masterGain) masterGain.gain.value = val/100;
-  document.getElementById("piVolume").textContent = Math.round(val);
-}
-setVolume(7);
+  if (startMusicBtn) startMusicBtn.addEventListener('click', startMusic);
 
-/* Emoji Slider */
-emojiSlider.oninput = function(e) {
-  const v = +e.target.value;
-  setVolume(v);
-  const faces = ["😶","🙂","😀","😁","🤩"];
-  emojiFace.textContent = faces[Math.min(4, Math.floor(v/22))];
-};
-
-/* Fill the Chai Cup */
-const chai = chaiCanvas.getContext("2d");
-function drawChai(level=50){
-  chai.clearRect(0,0,160,120);
-  chai.fillStyle="#ffecc7";
-  chai.fillRect(39,20,82,89); // cup bg
-  chai.strokeStyle="#cf930f";
-  chai.lineWidth=4; chai.strokeRect(39,20,82,89);// cup outline
-  chai.beginPath();
-  chai.arc(80,35,40,Math.PI,0); chai.fillStyle="#f6bc81"; chai.fill();
-  // tea
-  let teaLevel = 109-(level*0.85);
-  chai.fillStyle="#ba7f3a"; 
-  chai.fillRect(43,teaLevel,74, 109-teaLevel);
-  chai.beginPath(); chai.arc(80,teaLevel,37,Math.PI,0); chai.fill();
-}
-let chaiLvl = 50; drawChai(chaiLvl);
-chaiCanvas.onclick = ()=>{
-  chaiLvl = Math.floor(Math.random()*100);
-  drawChai(chaiLvl);
-  setVolume(chaiLvl);
-};
-
-/* Cat Meow Meter */
-catSlider.oninput = function(e){
-  const v=+e.target.value;
-  setVolume(v);
-  const faces=["🙀","😿","😺","😻"];
-  catEmoji.textContent=faces[Math.floor(v/34)];
-};
-
-/* DJ Knob */
-const dj = djKnob.getContext("2d");
-let angle = Math.PI/2;
-function drawKnob() {
-  dj.clearRect(0,0,120,120);
-  // vinyl
-  dj.beginPath(); dj.arc(60,60,55,0,2*Math.PI);
-  dj.fillStyle="#444"; dj.fill(); dj.lineWidth=5; dj.strokeStyle="#222"; dj.stroke();
-  // label
-  dj.beginPath(); dj.arc(60,60,13,0,2*Math.PI);
-  dj.fillStyle="#ffd057"; dj.fill();
-  // needle
-  dj.save();
-  dj.translate(60,60);
-  dj.rotate(angle);
-  dj.beginPath(); dj.moveTo(0,0); dj.lineTo(40,0);
-  dj.lineWidth=6; dj.strokeStyle="#ffd057"; dj.stroke();
-  dj.restore();
-}
-drawKnob();
-djKnob.onclick = ()=>{
-  angle += 0.7;
-  drawKnob();
-  let v = ((angle % (2*Math.PI)) / (2*Math.PI))*100;
-  setVolume(v);
-};
-
-/* Party Mode */
-partySlider.oninput = function(e){
-  const v=e.target.value;
-  setVolume(v);
-  partyText.textContent=v<20 ? "🤫 Quiet" : v<60 ? "Medium 🎶":"🎉 PARTY!";
-  partyText.style.color= v>60? "#fdff74":"#ffd8cf";
-};
-
-/* Ball Shooter */
-const ball=ballCanvas.getContext("2d");
-function shootBall() {
-  ball.clearRect(0,0,210,110);
-  let x=20, y=90, vx=5, vy=-7;
-  let interval=setInterval(()=>{
-    ball.clearRect(0,0,210,110);
-    // Bar
-    ball.fillStyle="#ffc300";
-    ball.fillRect(26,100,158,8);
-    // Ball
-    ball.beginPath(); ball.arc(x,y,10,0,2*Math.PI);
-    ball.fillStyle="red"; ball.fill(); ball.lineWidth=2; ball.strokeStyle='#2c2c2c'; ball.stroke();
-    x+=vx; y+=vy; vy+=0.58;
-    // Hit
-    if(y>=98){ clearInterval(interval); 
-      let level = Math.max(0, Math.min(158, x-26));
-      setVolume(level/158*100); }
-  },20);
-}
-ballCanvas.onclick = shootBall;
-
-/* Pencil Writing */
-pencilInput.oninput=function(e){
-  let v=+e.target.value;
-  if(v>=0 && v<=100){setVolume(v);}
-};
-
-/* Solar Eclipse */
-const ectx=eclipseCanvas.getContext("2d");
-let moonX=45;
-function drawEclipse(){
-  ectx.clearRect(0,0,150,150);
-  // Sun
-  ectx.beginPath(); ectx.arc(75,75,54,0,2*Math.PI);
-  let sunGrad = ectx.createRadialGradient(75,75,36, 75,75,54); 
-  sunGrad.addColorStop(0,'#ffe700'); sunGrad.addColorStop(1,'#fd9543');
-  ectx.fillStyle=sunGrad; ectx.fill();
-  // Moon
-  ectx.beginPath(); ectx.arc(moonX,75,53,0,2*Math.PI);
-  ectx.fillStyle="#15140e"; ectx.globalAlpha=0.91; ectx.fill(); ectx.globalAlpha=1;
-}
-drawEclipse();
-eclipseCanvas.onclick=()=>{
-  moonX = moonX<80? 108 : 45;
-  drawEclipse();
-  setVolume(moonX>80? 72 : 23);
-};
-
-/* Seesaw Balance */
-const sc=seesawCanvas.getContext("2d");
-let pos=Math.random()*180+15;
-function drawSeesaw(){
-  sc.clearRect(0,0,210,50);
-  sc.save();
-  // Bar
-  sc.translate(5,40);
-  let ang = (pos-105)/170 * 0.5;
-  sc.rotate(ang);
-  sc.fillStyle="#b7b5ad";sc.fillRect(0,-5,200,10);
-  // Ball
-  sc.beginPath(); sc.arc(pos,0,9,0,2*Math.PI);
-  sc.fillStyle="#64ebfa"; sc.fill(); sc.lineWidth=2; sc.strokeStyle = "#222";sc.stroke();
-  sc.restore();
-}
-drawSeesaw();
-seesawCanvas.onclick=()=>{
-  pos=Math.random()*180+15; drawSeesaw();
-  setVolume(pos/210*100);
-};
-
-/* Pump Volume */
-let pumpVal = 50;
-pumpBtn.onclick=()=>{
-  pumpVal = Math.min(100,pumpVal+Math.floor(Math.random()*14+6));
-  pumpBar.style.width = pumpVal+"%";
-  setVolume(pumpVal);
-};
-
-/* Pi Entry */
-let piVol = 7;
-piInput.oninput=e=>{
-  let txt=e.target.value;
-  if(/^(3(\.1?(4)?)?)$/.test(txt)){
-    setVolume(31);
-    piMsg.textContent="✔️ Correct vibe!"; piMsg.style.color="#14d853";
-  } else if(txt && !/^3(\.1?(4)?)?$/.test(txt)) {
-    piMsg.textContent="❌ Not π... try again!"; piMsg.style.color="#ff1e3c";
-  } else {
-    piMsg.textContent="";
+  function setVolume(val) {
+    if (masterGain) masterGain.gain.value = Math.max(0, Math.min(1, val/100));
+    if (piVolumeEl) piVolumeEl.textContent = Math.round(val);
   }
-};
+  setVolume(7);
+
+  /* ---- Emoji Slider ---- */
+  if (emojiSlider && emojiFace) {
+    emojiSlider.addEventListener('input', (e) => {
+      const v = +e.target.value;
+      setVolume(v);
+      const faces = ["😶","🙂","😀","😁","🤩"];
+      emojiFace.textContent = faces[Math.min(4, Math.floor(v/22))];
+    });
+  }
+
+  /* ---- Fill the Chai Cup ---- */
+  if (chaiCanvas && chaiCanvas.getContext) {
+    const chai = chaiCanvas.getContext("2d");
+    function drawChai(level=50){
+      chai.clearRect(0,0,160,120);
+      chai.fillStyle="#ffecc7";
+      chai.fillRect(39,20,82,89); // cup bg
+      chai.strokeStyle="#cf930f";
+      chai.lineWidth=4; chai.strokeRect(39,20,82,89);// cup outline
+      chai.beginPath();
+      chai.arc(80,35,40,Math.PI,0); chai.fillStyle="#f6bc81"; chai.fill();
+      // tea
+      let teaLevel = 109-(level*0.85);
+      chai.fillStyle="#ba7f3a"; 
+      chai.fillRect(43,teaLevel,74, 109-teaLevel);
+      chai.beginPath(); chai.arc(80,teaLevel,37,Math.PI,0); chai.fill();
+    }
+    let chaiLvl = 50; drawChai(chaiLvl);
+    chaiCanvas.addEventListener('click', ()=> {
+      chaiLvl = Math.floor(Math.random()*100);
+      drawChai(chaiLvl);
+      setVolume(chaiLvl);
+    });
+  }
+
+  /* ---- Cat Meow Meter ---- */
+  if (catSlider && catEmoji) {
+    catSlider.addEventListener('input', (e) => {
+      const v = +e.target.value;
+      setVolume(v);
+      const faces=["🙀","😿","😺","😻"];
+      catEmoji.textContent = faces[Math.floor(v/34)];
+    });
+  }
+
+  /* ---- DJ Knob ---- */
+  if (djKnob && djKnob.getContext) {
+    const dj = djKnob.getContext("2d");
+    let angle = Math.PI/2;
+    function drawKnob() {
+      dj.clearRect(0,0,120,120);
+      // vinyl
+      dj.beginPath(); dj.arc(60,60,55,0,2*Math.PI);
+      dj.fillStyle="#444"; dj.fill(); dj.lineWidth=5; dj.strokeStyle="#222"; dj.stroke();
+      // label
+      dj.beginPath(); dj.arc(60,60,13,0,2*Math.PI);
+      dj.fillStyle="#ffd057"; dj.fill();
+      // needle
+      dj.save();
+      dj.translate(60,60);
+      dj.rotate(angle);
+      dj.beginPath(); dj.moveTo(0,0); dj.lineTo(40,0);
+      dj.lineWidth=6; dj.strokeStyle="#ffd057"; dj.stroke();
+      dj.restore();
+    }
+    drawKnob();
+    djKnob.addEventListener('click', ()=> {
+      angle += 0.7;
+      drawKnob();
+      let v = ((angle % (2*Math.PI)) / (2*Math.PI))*100;
+      if (v < 0) v += 100; // normalize
+      setVolume(v);
+    });
+  }
+
+  /* ---- Party Mode ---- */
+  if (partySlider && partyText) {
+    partySlider.addEventListener('input', (e) => {
+      const v = +e.target.value;
+      setVolume(v);
+      partyText.textContent = v < 20 ? "🤫 Quiet" : v < 60 ? "Medium 🎶" : "🎉 PARTY!";
+      partyText.style.color = v > 60 ? "#fdff74" : "#ffd8cf";
+    });
+  }
+
+  /* ---- Ball Shooter ---- */
+  if (ballCanvas && ballCanvas.getContext) {
+    const ball = ballCanvas.getContext("2d");
+    function shootBall() {
+      ball.clearRect(0,0,210,110);
+      let x = 20, y = 90, vx = 5, vy = -7;
+      let interval = setInterval(()=> {
+        ball.clearRect(0,0,210,110);
+        // Bar
+        ball.fillStyle="#ffc300";
+        ball.fillRect(26,100,158,8);
+        // Ball
+        ball.beginPath(); ball.arc(x,y,10,0,2*Math.PI);
+        ball.fillStyle="red"; ball.fill(); ball.lineWidth=2; ball.strokeStyle='#2c2c2c'; ball.stroke();
+        x+=vx; y+=vy; vy+=0.58;
+        // Hit
+        if (y >= 98) {
+          clearInterval(interval);
+          let level = Math.max(0, Math.min(158, x-26));
+          setVolume(level/158*100);
+        }
+      }, 20);
+    }
+    ballCanvas.addEventListener('click', shootBall);
+  }
+
+  /* ---- Pencil Writing ---- */
+  if (pencilInput) {
+    pencilInput.addEventListener('input', function(e) {
+      let v = +e.target.value;
+      if (v >= 0 && v <= 100) { setVolume(v); }
+    });
+  }
+
+  /* ---- Solar Eclipse ---- */
+  if (eclipseCanvas && eclipseCanvas.getContext) {
+    const ectx = eclipseCanvas.getContext("2d");
+    let moonX = 45;
+    function drawEclipse(){
+      ectx.clearRect(0,0,150,150);
+      // Sun
+      ectx.beginPath(); ectx.arc(75,75,54,0,2*Math.PI);
+      let sunGrad = ectx.createRadialGradient(75,75,36, 75,75,54); 
+      sunGrad.addColorStop(0,'#ffe700'); sunGrad.addColorStop(1,'#fd9543');
+      ectx.fillStyle = sunGrad; ectx.fill();
+      // Moon
+      ectx.beginPath(); ectx.arc(moonX,75,53,0,2*Math.PI);
+      ectx.fillStyle = "#15140e"; ectx.globalAlpha = 0.91; ectx.fill(); ectx.globalAlpha = 1;
+    }
+    drawEclipse();
+    eclipseCanvas.addEventListener('click', ()=> {
+      moonX = moonX < 80 ? 108 : 45;
+      drawEclipse();
+      setVolume(moonX > 80 ? 72 : 23);
+    });
+  }
+
+  /* ---- Seesaw Balance ---- */
+  if (seesawCanvas && seesawCanvas.getContext) {
+    const sc = seesawCanvas.getContext("2d");
+    let pos = Math.random()*180 + 15;
+    function drawSeesaw(){
+      sc.clearRect(0,0,210,50);
+      sc.save();
+      // Bar
+      sc.translate(5,40);
+      let ang = (pos-105)/170 * 0.5;
+      sc.rotate(ang);
+      sc.fillStyle="#b7b5ad"; sc.fillRect(0,-5,200,10);
+      // Ball
+      sc.beginPath(); sc.arc(pos,0,9,0,2*Math.PI);
+      sc.fillStyle="#64ebfa"; sc.fill(); sc.lineWidth=2; sc.strokeStyle = "#222"; sc.stroke();
+      sc.restore();
+    }
+    drawSeesaw();
+    seesawCanvas.addEventListener('click', ()=> {
+      pos = Math.random()*180 + 15; drawSeesaw();
+      setVolume(pos/210*100);
+    });
+  }
+
+  /* ---- Pump Volume ---- */
+  let pumpVal = 50;
+  if (pumpBtn && pumpBar) {
+    pumpBtn.addEventListener('click', () => {
+      pumpVal = Math.min(100, pumpVal + Math.floor(Math.random() * 14 + 6));
+      pumpBar.style.width = pumpVal + "%";
+      setVolume(pumpVal);
+    });
+  }
+
+  /* ---- Pi Entry (improved) ---- */
+  const PI_DIGITS = "3.14159265358979323846264338327950288419716939937510";
+  if (piInput && piMsg) {
+    piInput.addEventListener('input', (e) => {
+      const txt = e.target.value.trim();
+      if (txt.length === 0) {
+        piMsg.textContent = "";
+        return;
+      }
+      // only allow numeric and dot
+      if (!/^[0-9.]+$/.test(txt)) {
+        piMsg.textContent = "❌ Use digits and a single dot only.";
+        piMsg.style.color = "#ff1e3c";
+        return;
+      }
+      if (PI_DIGITS.startsWith(txt)) {
+        if (txt.length === PI_DIGITS.length) {
+          piMsg.textContent = "🎉 Perfect π!";
+          piMsg.style.color = "#14d853";
+          setVolume(100);
+        } else {
+          piMsg.textContent = `✔️ Correct so far (${txt.length} digits)`;
+          piMsg.style.color = "#14d853";
+          // set a gentle reward proportional to progress (10..80)
+          let reward = Math.min(100, 10 + Math.floor((txt.length / PI_DIGITS.length) * 90));
+          setVolume(reward);
+        }
+      } else {
+        piMsg.textContent = "❌ Not π... try again!";
+        piMsg.style.color = "#ff1e3c";
+      }
+    });
+  }
+
+  /* ---- Init visuals and values ---- */
+  // set initial slider states to reflect setVolume(7) above
+  if (emojiSlider) emojiSlider.value = 7;
+  if (catSlider) catSlider.value = 7;
+  if (partySlider) partySlider.value = 50;
+  if (pumpBar) pumpBar.style.width = "50%";
+});
 </script>
 </body>
 </html>
